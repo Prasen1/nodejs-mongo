@@ -34,11 +34,10 @@ This integration makes use of a Node.js script that runs at 15 minutes intervals
     }
 
 ---
-- In the config_mongo.js file, enter your [Influx API token](https://docs.influxdata.com/influxdb/cloud/security/tokens/create-token/)
-- In the same config_mongo.js file, enter your MongoDB url, database name and collection name where the data will be stored. The default MongoDB URL for a local installation is http://localhost:27017
+- In the config_mongo.js file, enter your MongoDB url, database name and collection name where the data will be stored. The default MongoDB URL for a local installation is http://localhost:27017
 
 ## How to run
-- In the /Nodejs-Influx directory, run `node insert_db.js` after uncommenting the `var interval=setInterval(run,900000)` and commenting out the `run()` line in the same file
+- In the /nodejs-mongo directory, run `node insert_db.js` after uncommenting the `var interval=setInterval(run,900000)` and commenting out the `run()` line in the same file
 
 **or**
 
