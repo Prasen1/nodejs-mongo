@@ -15,8 +15,8 @@ This integration makes use of a Node.js script that runs at 15 minutes intervals
 2. Run npm install in the directory /nodejs-mongo
 
 ### Configuration
-1. In the config_catchpoint.js file under config sub-directory, enter your [Catchpoint API consumer key and secret](https://portal.catchpoint.com/ui/Content/Administration/ApiDetail.aspx)
-2. In the tests object of the config_catchpoint.js file, enter the Test IDs you want to pull the data for in an array format. Please ensure to enter only the Test ID in the array belonging to the respective Test Type.
+1. In the "config_catchpoint.js" file under config sub-directory, enter your [Catchpoint API consumer key and secret](https://portal.catchpoint.com/ui/Content/Administration/ApiDetail.aspx)
+2. In the tests object of the "config_catchpoint.js" file, enter the Test IDs you want to pull the data for in an array format. Please ensure to enter only the Test ID in the array belonging to the respective Test Type.
 
 *Example:*
 
@@ -34,16 +34,16 @@ This integration makes use of a Node.js script that runs at 15 minutes intervals
     }
 
 ---
-- In the config_mongo.js file, enter your MongoDB url, database name and collection name where the data will be stored. The default MongoDB URL for a local installation is http://localhost:27017
+3. In the "config_mongo.js" file, enter your MongoDB url, database name and collection name where the data will be stored. The default MongoDB URL for a local installation is http://localhost:27017
 
 ## How to run
 - In the /nodejs-mongo directory, run `node insert_db.js` after uncommenting the `var interval=setInterval(run,900000)` and commenting out the `run()` line in the same file
 
 **or**
 
-- Create a cronjob to run the insert_db.js script every 15 minutes.
+- Create a cronjob to run the "insert_db.js" script every 15 minutes.
 
-*Example crontab entry, if the file resides in /usr/local/bin/insert_db.js*
+*Example crontab entry, if the "insert_db.js" file resides in /usr/local/bin/*
 
 `*/15 * * * * cd /usr/local/bin/ && node /usr/local/bin/insert_db.js > /usr/local/bin/logs/cronlog.log 2>&1`
 
