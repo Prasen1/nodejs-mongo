@@ -1,18 +1,18 @@
-# Nodejs-Influx
-Catchpoint Integration with InfluxDB
+# Nodejs-MongoDB
+Catchpoint Integration with MongoDB
 ---
-InfluxDB works really well with observability tools like Grafana and more. We can use this integration to pull timeseries data from Catchpoint and store it in influxDB so that we can plot similar dashboards as Catchpoint.
+We can use this integration to pull timeseries data from Catchpoint and store it in MongoDB for analysis or as a long-term test data storage solution.
 
 This integration makes use of a Node.js script that runs at 15 minutes intervals to pull raw performance chart data from the Catchpoint GET: LastRaw API. It can be used to retrieve and store data for a list of tests in the same division. 
 
 ## Prerequisites
 1. NodeJS v16.x
-2. [InfluxDB v2.x](https://docs.influxdata.com/influxdb/v2.1/install/?t=Linux)
+2. [MongoDB 5.x](https://www.mongodb.com/try/download/community)
 3. Catchpoint account with a REST API consumer
 
 ## Installation and Configuration
-1. Copy the Nodejs-Influx folder to your machine
-2. Run npm install in the directory /Nodejs-Influx
+1. Copy the nodejs-mongo folder to your machine
+2. Run npm install in the directory /nodejs-mongo
 
 ### Configuration
 1. In the config_catchpoint.js file under config sub-directory, enter your [Catchpoint API consumer key and secret](https://portal.catchpoint.com/ui/Content/Administration/ApiDetail.aspx)
@@ -34,8 +34,8 @@ This integration makes use of a Node.js script that runs at 15 minutes intervals
     }
 
 ---
-- In the config_influx.js file, enter your [Influx API token](https://docs.influxdata.com/influxdb/cloud/security/tokens/create-token/)
-- In the same config_influx.js file, enter your InfluxDB organization name, bucket name, url and measurement name where the data will be stored. Note that the organization and bucket should be created after installation of InfluxDB. The default Influx URL is http://localhost:8086
+- In the config_mongo.js file, enter your [Influx API token](https://docs.influxdata.com/influxdb/cloud/security/tokens/create-token/)
+- In the same config_mongo.js file, enter your MongoDB url, database name and collection name where the data will be stored. The default MongoDB URL for a local installation is http://localhost:27017
 
 ## How to run
 - In the /Nodejs-Influx directory, run `node insert_db.js` after uncommenting the `var interval=setInterval(run,900000)` and commenting out the `run()` line in the same file
@@ -48,15 +48,14 @@ This integration makes use of a Node.js script that runs at 15 minutes intervals
 
 `*/15 * * * * cd /usr/local/bin/ && node /usr/local/bin/insert_db.js > /usr/local/bin/logs/cronlog.log 2>&1`
 
-**Note: Ensure that influx service is running**
 
 ## File Structure
 
-    Nodejs-Influx/
+    nodejs-mongo/
     ├── auth_handler.js       ## Contains APIs related to authentication       
     ├── config
     | ├── config_catchpoint.js## Configuration file for Catchpoint 
-    | ├── config_influx.js    ## Configuration file for InfluxDB 
+    | ├── config_mongo.js     ## Configuration file for InfluxDB 
     ├── logs
     | ├── info
     | |  ├── info.log         ## Contains informational logs. File name will be based on date of execution
@@ -65,8 +64,8 @@ This integration makes use of a Node.js script that runs at 15 minutes intervals
     ├── utils
     | ├── logger.js           ## logger utility
     ├──package.json           ## project dependencies
-    └── node_monitor.js       ## main file
+    └── insert_db.js          ## main file
 
 
-Once the script starts running and data is inserted into InfluxDB, it can queried using [Flux queries](https://docs.influxdata.com/influxdb/v2.1/query-data/execute-queries/influx-api/) or visualized in graphs by opening the [Influx Data Explorer](https://docs.influxdata.com/influxdb/cloud/query-data/execute-queries/data-explorer/). 
+Once the script starts running and data is inserted into MongoDB, it can queried using [MongoDB shell](https://docs.mongodb.com/manual/tutorial/query-documents/) or directly viewed using [MongoDBCompass](https://www.mongodb.com/products/compass)
 
