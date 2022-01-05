@@ -67,7 +67,3 @@ This integration makes use of a Node.js script that runs at 15 minutes intervals
 
 
 Once the script starts running and data is inserted into MongoDB, it can queried using [MongoDB shell](https://docs.mongodb.com/manual/tutorial/query-documents/) or directly viewed using [MongoDBCompass](https://www.mongodb.com/products/compass)
-<<<<<<< HEAD
-=======
-
->>>>>>> d91f62ef71e6aee226f5f3c8713d81486fca722c
