@@ -54,7 +54,7 @@ This integration makes use of a Node.js script that runs at 15 minutes intervals
     ├── auth_handler.js       ## Contains APIs related to authentication       
     ├── config
     | ├── config_catchpoint.js## Configuration file for Catchpoint 
-    | ├── config_mongo.js     ## Configuration file for InfluxDB 
+    | ├── config_mongo.js     ## Configuration file for MongoDB
     ├── logs
     | ├── info
     | |  ├── info.log         ## Contains informational logs. File name will be based on date of execution
