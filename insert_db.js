@@ -11,7 +11,7 @@ import { MongoClient } from 'mongodb';
 functions:
         Function Name                   Description
     fetch_Data            :     function to fetch data from LastRaw API
-    convert_data          :     function to convert JSON from LastRaw API to Documents
+    convert_data          :     function to transform JSON from LastRaw API to Documents
     write_data            :     function to insert Documents into MongoDB
     get_token             :     function to get Access token 
 
@@ -30,11 +30,11 @@ const client = new MongoClient(db_url);
 // main function to fetch and store data
 async function run() {
     try {
-        let token = await get_token(client_key, client_secret);
-        var tests_list = [];
+        const token = await get_token(client_key, client_secret);
+        let tests_list = [];
         // breakdown the tests list into chunks of 50 test ids for each test type
         Object.keys(test_types).forEach(function (key, index) {
-            var temp = [], chunk = 50;
+            let temp = [], chunk = 50;
             for (let i = 0, j = test_types[key].length; i < j; i += chunk) {
                 temp.push(test_types[key].slice(i, i + chunk));
             }
@@ -42,7 +42,7 @@ async function run() {
         });
         for (let tests of tests_list) {
             for (let arr of tests) {
-                var url = `${raw_data_url}${arr}`;
+                let url = `${raw_data_url}${arr}`;
                 let raw_data = await fetch_Data(token, url);
                 let docs = convert_data(raw_data);
                 if (docs != "No Data") {
@@ -61,76 +61,72 @@ async function run() {
 }
 
 // function to fetch Raw Data
-function fetch_Data(token, url) {
-    return new Promise((resolve, reject) => {
-        fetch(url, {
-            headers: {
-                'accept': 'application/json',
-                'authorization': `Bearer ${token}`
-            }
-        })
-            .then(res => res.json())
-            .then(json => {
-                // if object has property Message ,display Error, else Process Data
-                if (json.hasOwnProperty('Message')) {
-                    log.error(`${json.Message}`);
-                    reject(json.Message)
-                } else {
-                    log.info(`<<Fetched Raw Test Data>> ${url} Raw Data Start Timestamp: ${json.start} End Timestamp: ${json.end}`)
-                    if (json.hasOwnProperty('error')) {
-                        log.error(`${json.error}`, "<<Check Catchpoint configuration file>>")
-                    }
-                    resolve(json)
+async function fetch_Data(token, url) {
+    let response = await fetch(url, {
+        headers: {
+            'accept': 'application/json',
+            'authorization': `Bearer ${token}`
+        }
+    })
+        .then(res => res.json())
+        .then(json => {
+            // if object has property Message, display Error, else Process Data
+            if (json.hasOwnProperty('Message')) {
+                log.error(`${json.Message}`);
+            } else {
+                log.info("<<Fetched Raw Test Data>>", url, `Raw Data Start Timestamp: ${json.start} End Timestamp: ${json.end}`)
+                if (json.hasOwnProperty('error')) {
+                    log.error(`${json.error}`, "<<Check Catchpoint configuration file>>")
                 }
-
-            }).catch(err => {
-                log.error(err)
-                reject(err)
+                return json;
             }
-            );
-    });
+        }).catch(err => {
+            log.error(err);
+        }
+        );
+    return response;
 }
-// function to parse and convert JSON received from api to document structure for mongodb
+// function to parse and transform JSON received from API to Document structure for MongoDB
 function convert_data(structure) {
     // Checks if there is test data for the last 15 mins
     if (structure['detail'] != null) {
 
-        var items = []
-        var test_params = []
-        var test_metric_values = []
-        var temp = {}
-        var solution = {}
-
-        for (let value of structure['detail']['fields']['synthetic_metrics']) {
-            var metrics = value['name']
+        let items = []
+        let test_params = []
+        let test_metric_values = []
+        let temp = {}
+        let solution = {}
+        for (let value of structure?.detail?.fields?.synthetic_metrics) {
+            let metrics = value['name']
             test_params.push(metrics)
         }
-
-        for (let value of structure['detail']['items']) {
-            var metric_values = value['synthetic_metrics']
-            var flag = true
-            var temp = {}
+        for (let value of structure?.detail?.items) {
+            let metric_values = value['synthetic_metrics']
+            let flag = true
+            let temp = {}
             temp.timestamp = {}
             for (let i in value) {
                 if (i != 'synthetic_metrics') {
-                    if (i == 'dimension') {
-                        temp.timestamp = value[i]['name']
-                    }
-                    if (i == 'breakdown_1') {
-                        temp[i] = value[i]['name']
-                    }
-                    if (i == 'breakdown_2') {
-                        temp[i] = value[i]['name']
-                    }
-                    if (i == 'hop_number') {
-                        temp[i] = value[i]
-                    }
-                    if (i == 'step') {
-                        temp[i] = value[i]
+                    switch (i) {
+                        case "dimension":
+                            temp.timestamp = value[i]['name']
+                            break;
+                        case "breakdown_1":
+                            temp[i] = value[i]['name']
+                            break;
+                        case "breakdown_2":
+                            temp[i] = value[i]['name']
+                            break;
+                        case "hop_number":
+                            temp[i] = value[i]
+                            break;
+                        case "step":
+                            temp[i] = value[i]
+                            break;
                     }
                 }
-            }
-            if (flag == true) {
+            }            
+            if (flag) {
                 metric_values.push(temp)
                 test_metric_values.push(metric_values)
             }
@@ -148,7 +144,7 @@ function convert_data(structure) {
             }
             items.push(temp)
         }
-        solution['items'] = items;
+        solution['items'] = items
         return solution['items'];
     }
     else {
@@ -156,8 +152,7 @@ function convert_data(structure) {
         return ("No Data");
     }
 }
-
-//function to insert documents into mongodb
+// function to insert Documents into MongoDB
 async function write_data(docs) {
     try {
         log.info("<<#Documents to insert>>", docs.length)
